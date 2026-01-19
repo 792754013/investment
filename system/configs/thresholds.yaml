@@ -1,0 +1,15 @@
+thresholds:
+  demand_signal_min: 0.2
+  constraint_min_health: 0.4
+  demand_weight: 0.6
+  constraint_weight: 0.4
+  break_risk_penalty: 0.3
+  top_theme_n: 2
+  min_score: 0.35
+  break_risk_stop: 0.75
+  max_constraint_exposure: 2
+  killswitch_level: 0.9
+  initial_cash: 1000000
+  max_positions: 3
+  slippage: 0.0005
+  fee: 0.0003
