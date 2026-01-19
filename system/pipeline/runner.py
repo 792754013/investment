@@ -1,3 +1,5 @@
+"""流程运行器：按顺序执行策略步骤并返回决策。"""
+
 from __future__ import annotations
 
 from datetime import date
@@ -23,8 +25,10 @@ from system.steps import (
 
 
 def run_pipeline(product: str, run_date: date, overrides: Dict[str, Dict[str, str]] | None = None) -> List[DecisionResult]:
+    # 加载全局阈值配置并初始化流程状态
     thresholds = load_thresholds().get("thresholds", {})
     state = PipelineState(product=product, date=run_date, thresholds=thresholds, overrides=overrides or {})
+    # 依次执行每个步骤，构成完整决策流水线
     s01_demand_scan.apply(state)
     s02_demand_quality.apply(state)
     s03_match_constraints.apply(state)
@@ -38,4 +42,5 @@ def run_pipeline(product: str, run_date: date, overrides: Dict[str, Dict[str, st
     s11_takeprofit.apply(state)
     s12_portfolio.apply(state)
     s13_killswitch.apply(state)
+    # 返回最终决策列表
     return state.decisions

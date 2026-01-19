@@ -1,3 +1,5 @@
+"""命令行入口：提供选品、运行、回测等操作。"""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -20,6 +22,7 @@ console = Console()
 
 
 def _parse_date(value: str) -> datetime.date:
+    # 统一日期解析格式，避免命令行输入歧义
     return datetime.strptime(value, "%Y-%m-%d").date()
 
 
@@ -31,6 +34,7 @@ def cli() -> None:
 @cli.command()
 @click.option("--product", required=True, help="产品名称")
 def select(product: str) -> None:
+    # 根据产品生成监控清单并打印表格
     plan = build_monitor_plan(product)
     table = Table(title=f"监控清单: {plan.product}")
     table.add_column("主题", style="cyan")
@@ -45,6 +49,7 @@ def select(product: str) -> None:
 @click.option("--product", required=True, help="产品名称")
 @click.option("--date", "date_str", required=True, help="日期 YYYY-MM-DD")
 def run(product: str, date_str: str) -> None:
+    # 单日运行：执行决策流程并保存结果
     run_date = _parse_date(date_str)
     results = run_pipeline(product, run_date)
     run_record = save_run(date_str, product, results)
@@ -66,6 +71,7 @@ def run(product: str, date_str: str) -> None:
 @click.option("--end", required=True, help="结束日期 YYYY-MM-DD")
 @click.option("--stage-overrides", default=None, help="阶段注入文件")
 def backtest(product: str, start: str, end: str, stage_overrides: str | None) -> None:
+    # 回测命令：生成输出目录并执行回测引擎
     start_date = _parse_date(start)
     end_date = _parse_date(end)
     output_dir = Path("backtest_output") / f"{product}_{start}_{end}"
@@ -73,12 +79,15 @@ def backtest(product: str, start: str, end: str, stage_overrides: str | None) ->
     _, _, summary = run_backtest(product, start_date, end_date, stage_overrides, str(output_dir))
 
     def fmt_pct(value: float) -> str:
+        # 将小数转换为百分比字符串
         return f"{value * 100:.2f}%"
 
     def fmt_num(value: float) -> str:
+        # 常用金额格式化
         return f"{value:,.2f}"
 
     def fmt_ratio(value: float) -> str:
+        # 处理无穷大显示，避免表格溢出
         return "inf" if math.isinf(value) else f"{value:.2f}"
 
     table = Table(title=f"回测统计: {product} {start} ~ {end}")
@@ -110,6 +119,7 @@ def backtest(product: str, start: str, end: str, stage_overrides: str | None) ->
 @cli.command()
 @click.option("--run-id", required=True, help="运行ID")
 def replay(run_id: str) -> None:
+    # 回放历史运行记录，便于复盘
     record = load_run(run_id)
     table = Table(title=f"回放: {record.product} {record.date}")
     table.add_column("主题", style="cyan")
@@ -124,6 +134,7 @@ def replay(run_id: str) -> None:
 
 @cli.command()
 def products() -> None:
+    # 列出可用产品清单
     items = list_products()
     console.print("可用产品:")
     for item in items:

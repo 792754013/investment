@@ -1,3 +1,5 @@
+"""数据模型：用 Pydantic 描述流程中的结构化数据。"""
+
 from __future__ import annotations
 
 from datetime import date
@@ -7,12 +9,16 @@ from pydantic import BaseModel, Field
 
 
 class DemandEvent(BaseModel):
+    """需求事件：记录主题与需求信号。"""
+
     theme: str
     signal_strength: float
     reason: str
 
 
 class DemandQuality(BaseModel):
+    """需求质量评估结果。"""
+
     theme: str
     quality_score: float
     passed: bool
@@ -20,6 +26,8 @@ class DemandQuality(BaseModel):
 
 
 class ConstraintSnapshot(BaseModel):
+    """约束快照：主题对应的风险约束指标。"""
+
     theme: str
     constraint_id: str
     health_score: float
@@ -28,24 +36,32 @@ class ConstraintSnapshot(BaseModel):
 
 
 class OpportunityScore(BaseModel):
+    """机会评分结果。"""
+
     theme: str
     score: float
     reason: str
 
 
 class ThemeRank(BaseModel):
+    """主题排序结果。"""
+
     theme: str
     rank: int
     score: float
 
 
 class StageResult(BaseModel):
+    """市场阶段判定结果。"""
+
     theme: str
     stage: str
     reason: str
 
 
 class DecisionIntent(BaseModel):
+    """阶段性交易意图（未经过终局开关）。"""
+
     theme: str
     intent: str
     reason: str
@@ -53,6 +69,8 @@ class DecisionIntent(BaseModel):
 
 
 class DecisionResult(BaseModel):
+    """最终决策输出，包含完整上下文信息。"""
+
     date: date
     product: str
     theme: str
@@ -65,6 +83,8 @@ class DecisionResult(BaseModel):
 
 
 class RunResult(BaseModel):
+    """单次运行输出，包含决策列表。"""
+
     run_id: str
     date: date
     product: str
@@ -72,17 +92,23 @@ class RunResult(BaseModel):
 
 
 class MonitorItem(BaseModel):
+    """监控计划中的单个主题条目。"""
+
     theme: str
     constraint_id: str
     assets: List[str]
 
 
 class MonitorPlan(BaseModel):
+    """产品级监控计划。"""
+
     product: str
     items: List[MonitorItem]
 
 
 class BacktestTrade(BaseModel):
+    """回测交易记录。"""
+
     date: date
     asset_id: str
     action: str
@@ -93,6 +119,8 @@ class BacktestTrade(BaseModel):
 
 
 class EquityPoint(BaseModel):
+    """净值曲线采样点。"""
+
     date: date
     equity: float
     cash: float
@@ -100,6 +128,8 @@ class EquityPoint(BaseModel):
 
 
 class BacktestSummary(BaseModel):
+    """回测汇总指标。"""
+
     start: date
     end: date
     initial_cash: float = 0.0
@@ -124,6 +154,8 @@ class BacktestSummary(BaseModel):
 
 
 class PipelineState(BaseModel):
+    """流程状态：贯穿整条策略流水线的共享上下文。"""
+
     product: str
     date: date
     thresholds: Dict[str, float]
@@ -138,6 +170,7 @@ class PipelineState(BaseModel):
     overrides: Dict[str, Dict[str, str]] = Field(default_factory=dict)
 
     def theme_map(self) -> Dict[str, Dict[str, Optional[BaseModel]]]:
+        # 将流程中分散的结果按主题聚合，便于调试或报表展示
         mapping: Dict[str, Dict[str, Optional[BaseModel]]] = {}
         for item in self.events:
             mapping.setdefault(item.theme, {})["event"] = item

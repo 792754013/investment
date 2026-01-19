@@ -1,8 +1,9 @@
+# 约束配置：每个约束包含健康度与破坏风险
 constraints:
   REAL_RATE:
     name: "实际利率约束"
-    health_score: 0.72
-    break_risk: 0.25
+    health_score: 0.72  # 健康度越高越安全
+    break_risk: 0.25  # 破坏风险用于惩罚或止损
   GEO_RISK:
     name: "地缘风险约束"
     health_score: 0.68
