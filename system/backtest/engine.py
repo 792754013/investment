@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 
 import pandas as pd
 
-from system.backtest.metrics import max_drawdown
+from system.backtest.metrics import equity_stats, max_drawdown
 from system.config_loader import (
     load_assets,
     load_prices,
@@ -147,12 +147,34 @@ def run_backtest(
         equity = cash + day_value
         equity_points.append(EquityPoint(date=run_date, equity=equity, cash=cash, positions_value=day_value))
 
+    final_equity = equity_points[-1].equity if equity_points else initial_cash
+    total_return = (final_equity - initial_cash) / initial_cash if initial_cash else 0.0
+    max_dd = max_drawdown(equity_points)
+    stats = equity_stats(equity_points)
+    calmar = stats["annualized_return"] / max_dd if max_dd > 0 else 0.0
+
     summary = BacktestSummary(
         start=start,
         end=end,
-        total_return=(equity_points[-1].equity - initial_cash) / initial_cash if equity_points else 0.0,
-        max_drawdown=max_drawdown(equity_points),
+        initial_cash=initial_cash,
+        final_equity=final_equity,
+        total_return=total_return,
+        annualized_return=float(stats["annualized_return"]),
+        annualized_volatility=float(stats["annualized_volatility"]),
+        sharpe=float(stats["sharpe"]),
+        sortino=float(stats["sortino"]),
+        calmar=calmar,
+        max_drawdown=max_dd,
         trade_count=len(trades),
+        trading_days=int(stats["trading_days"]),
+        win_rate=float(stats["win_rate"]),
+        positive_days=int(stats["positive_days"]),
+        negative_days=int(stats["negative_days"]),
+        flat_days=int(stats["flat_days"]),
+        best_day=float(stats["best_day"]),
+        worst_day=float(stats["worst_day"]),
+        profit_factor=float(stats["profit_factor"]),
+        avg_daily_return=float(stats["avg_daily_return"]),
     )
 
     ensure_dir(output_dir)

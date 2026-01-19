@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import math
 from pathlib import Path
 
 import click
@@ -69,8 +70,41 @@ def backtest(product: str, start: str, end: str, stage_overrides: str | None) ->
     end_date = _parse_date(end)
     output_dir = Path("backtest_output") / f"{product}_{start}_{end}"
     ensure_dir(str(output_dir))
-    run_backtest(product, start_date, end_date, stage_overrides, str(output_dir))
-    console.print(f"回测完成，输出目录: {output_dir}")
+    _, _, summary = run_backtest(product, start_date, end_date, stage_overrides, str(output_dir))
+
+    def fmt_pct(value: float) -> str:
+        return f"{value * 100:.2f}%"
+
+    def fmt_num(value: float) -> str:
+        return f"{value:,.2f}"
+
+    def fmt_ratio(value: float) -> str:
+        return "inf" if math.isinf(value) else f"{value:.2f}"
+
+    table = Table(title=f"回测统计: {product} {start} ~ {end}")
+    table.add_column("指标", style="cyan")
+    table.add_column("数值", justify="right")
+    table.add_row("起始资金", fmt_num(summary.initial_cash))
+    table.add_row("结束权益", fmt_num(summary.final_equity))
+    table.add_row("总收益率", fmt_pct(summary.total_return))
+    table.add_row("年化收益率", fmt_pct(summary.annualized_return))
+    table.add_row("年化波动率", fmt_pct(summary.annualized_volatility))
+    table.add_row("最大回撤", fmt_pct(summary.max_drawdown))
+    table.add_row("夏普比率", f"{summary.sharpe:.2f}")
+    table.add_row("索提诺比率", f"{summary.sortino:.2f}")
+    table.add_row("卡玛比率", f"{summary.calmar:.2f}")
+    table.add_row("收益因子", fmt_ratio(summary.profit_factor))
+    table.add_row("交易次数", str(summary.trade_count))
+    table.add_row("胜率(日)", fmt_pct(summary.win_rate))
+    table.add_row("上涨天数", str(summary.positive_days))
+    table.add_row("下跌天数", str(summary.negative_days))
+    table.add_row("平盘天数", str(summary.flat_days))
+    table.add_row("最佳单日", fmt_pct(summary.best_day))
+    table.add_row("最差单日", fmt_pct(summary.worst_day))
+    table.add_row("日均收益", fmt_pct(summary.avg_daily_return))
+    table.add_row("交易日数", str(summary.trading_days))
+    console.print(table)
+    console.print(f"输出目录: {output_dir}")
 
 
 @cli.command()

@@ -1,0 +1,9 @@
+# Backtest outputs
+backtest_output/
+
+# Run records
+runs/
+
+# Python cache
+__pycache__/
+*.pyc

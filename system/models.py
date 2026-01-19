@@ -102,9 +102,25 @@ class EquityPoint(BaseModel):
 class BacktestSummary(BaseModel):
     start: date
     end: date
+    initial_cash: float = 0.0
+    final_equity: float = 0.0
     total_return: float
+    annualized_return: float = 0.0
+    annualized_volatility: float = 0.0
+    sharpe: float = 0.0
+    sortino: float = 0.0
+    calmar: float = 0.0
     max_drawdown: float
     trade_count: int
+    trading_days: int = 0
+    win_rate: float = 0.0
+    positive_days: int = 0
+    negative_days: int = 0
+    flat_days: int = 0
+    best_day: float = 0.0
+    worst_day: float = 0.0
+    profit_factor: float = 0.0
+    avg_daily_return: float = 0.0
 
 
 class PipelineState(BaseModel):
@@ -119,7 +135,7 @@ class PipelineState(BaseModel):
     stages: List[StageResult] = Field(default_factory=list)
     intents: List[DecisionIntent] = Field(default_factory=list)
     decisions: List[DecisionResult] = Field(default_factory=list)
-    overrides: Dict[str, str] = Field(default_factory=dict)
+    overrides: Dict[str, Dict[str, str]] = Field(default_factory=dict)
 
     def theme_map(self) -> Dict[str, Dict[str, Optional[BaseModel]]]:
         mapping: Dict[str, Dict[str, Optional[BaseModel]]] = {}

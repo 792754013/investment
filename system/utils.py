@@ -17,7 +17,7 @@ def generate_run_id(prefix: str) -> str:
 
 def save_json(path: str, payload: Dict[str, Any]) -> None:
     with open(path, "w", encoding="utf-8") as handle:
-        json.dump(payload, handle, ensure_ascii=False, indent=2)
+        json.dump(payload, handle, ensure_ascii=False, indent=2, default=str)
 
 
 def load_json(path: str) -> Dict[str, Any]:

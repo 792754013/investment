@@ -22,7 +22,7 @@ from system.steps import (
 )
 
 
-def run_pipeline(product: str, run_date: date, overrides: Dict[str, str] | None = None) -> List[DecisionResult]:
+def run_pipeline(product: str, run_date: date, overrides: Dict[str, Dict[str, str]] | None = None) -> List[DecisionResult]:
     thresholds = load_thresholds().get("thresholds", {})
     state = PipelineState(product=product, date=run_date, thresholds=thresholds, overrides=overrides or {})
     s01_demand_scan.apply(state)
