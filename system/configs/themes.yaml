@@ -1,6 +1,7 @@
+# 主题配置：主题名称映射到风险约束与描述
 themes:
   央行购金:
-    constraint_id: REAL_RATE
+    constraint_id: REAL_RATE  # 指向约束配置的 ID
     description: "央行购金与实际利率"
   地缘冲突:
     constraint_id: GEO_RISK

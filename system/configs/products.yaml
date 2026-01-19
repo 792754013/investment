@@ -1,8 +1,10 @@
+# 产品配置：产品与主题列表
 products:
   GOLD:
     - 央行购金
     - 地缘冲突
     - 通胀对冲
+# 产品元数据：用于展示或说明
 meta:
   GOLD:
     description: "黄金产品监控"

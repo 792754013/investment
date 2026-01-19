@@ -1,15 +1,16 @@
+# 阈值与参数配置：策略核心可调参数
 thresholds:
-  demand_signal_min: 0.2
-  constraint_min_health: 0.4
-  demand_weight: 0.6
-  constraint_weight: 0.4
-  break_risk_penalty: 0.3
-  top_theme_n: 2
-  min_score: 0.35
-  break_risk_stop: 0.75
-  max_constraint_exposure: 2
-  killswitch_level: 0.9
-  initial_cash: 1000000
-  max_positions: 3
-  slippage: 0.0005
-  fee: 0.0003
+  demand_signal_min: 0.2  # 需求信号最低门槛
+  constraint_min_health: 0.4  # 约束健康度最低值
+  demand_weight: 0.6  # 需求权重
+  constraint_weight: 0.4  # 约束权重
+  break_risk_penalty: 0.3  # 破坏风险惩罚系数
+  top_theme_n: 2  # 入场主题数量上限
+  min_score: 0.35  # 进入门槛分数
+  break_risk_stop: 0.75  # 破坏风险止损阈值
+  max_constraint_exposure: 2  # 单约束最大持仓数量
+  killswitch_level: 0.9  # Kill Switch 触发阈值
+  initial_cash: 1000000  # 回测初始资金
+  max_positions: 3  # 最大持仓数量
+  slippage: 0.0005  # 滑点假设
+  fee: 0.0003  # 手续费率
