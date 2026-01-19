@@ -1,0 +1,8 @@
+products:
+  GOLD:
+    - 央行购金
+    - 地缘冲突
+    - 通胀对冲
+meta:
+  GOLD:
+    description: "黄金产品监控"

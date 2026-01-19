@@ -1,0 +1,13 @@
+constraints:
+  REAL_RATE:
+    name: "实际利率约束"
+    health_score: 0.72
+    break_risk: 0.25
+  GEO_RISK:
+    name: "地缘风险约束"
+    health_score: 0.68
+    break_risk: 0.30
+  INFLATION:
+    name: "通胀约束"
+    health_score: 0.70
+    break_risk: 0.28

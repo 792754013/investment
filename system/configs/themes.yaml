@@ -1,0 +1,10 @@
+themes:
+  央行购金:
+    constraint_id: REAL_RATE
+    description: "央行购金与实际利率"
+  地缘冲突:
+    constraint_id: GEO_RISK
+    description: "地缘风险驱动避险"
+  通胀对冲:
+    constraint_id: INFLATION
+    description: "通胀对冲需求"
