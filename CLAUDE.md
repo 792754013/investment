@@ -45,6 +45,8 @@ uv run pytest -q            # 跑测试
 uv run jupyter lab          # notebook
 ```
 
+如果出现 `ModuleNotFoundError: No module named 'lab'`：macOS 给 `.venv` 里的 `.pth` 文件加了 hidden 标记，Python 3.13 会跳过它。运行 `chflags nohidden .venv/lib/python3.13/site-packages/*.pth` 即可。
+
 ## 安全
 
 - API Key、token 只放在 `.env`（变量名见 `.env.example`），由用户本人填写。不要读取、打印或提交 `.env`。
