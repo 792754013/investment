@@ -1,9 +1,19 @@
-# Backtest outputs
-backtest_output/
-
-# Run records
-runs/
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# 数据不进 git：历史下载、自采数据、封存段都在 data/ 下
+data/
+*.parquet
+
+# 密钥
+.env
+.env.*
+!.env.example
+
+# 本机
+.DS_Store
+.claude/settings.local.json

@@ -1,0 +1,9 @@
+# uv workspace 根（虚拟根，不是可安装的包）。成员见 members。
+[tool.uv.workspace]
+members = ["research"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "jupyterlab>=4",
+]

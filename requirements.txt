@@ -1,5 +1,0 @@
-pydantic
-pyyaml
-pandas
-click
-rich
