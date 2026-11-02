@@ -1,6 +1,6 @@
 id: OPP-002
 name: A 股可转债（双低基准 + 下修 / 强赎 / 回售事件）
-status: paper                # candidate / researching / paper / live / decaying / retired
+status: retired              # candidate / researching / paper / live / decaying / retired
 mechanism: 规则约束 + 摩擦成本
 counterparty: >
   不想还钱的发行人（回售或到期压力下主动下修转股价）；
@@ -32,3 +32,5 @@ review_log:
     note: v5b（双低 + 强赎即卖 + 下修提议买入）样本内 2 组按字面满足 G1，但敏感性翻转、2026 年初跑输，独立复核不建议解封；待用户决定，见 docs/research/C1v5-events-overlay.md
   - date: 2026-11-02
     note: 用户选择不解封、冻结 v5b（5 日 / 30 只 / 缓冲 1.0）并前向记录到 2027-11-01，见 docs/research/CB-forward.md
+  - date: 2026-11-02
+    note: 用户决定不继续前向记录，状态改为 retired。样本内勉强通过、证据不足，封存段未解封；重启需重新冻结并重新开始前向计时
