@@ -12,7 +12,7 @@
   <array>
     <string>/bin/zsh</string>
     <string>-c</string>
-    <string>cd /Users/kebin/Documents/GitHub/investment &amp;&amp; chflags nohidden .venv/lib/python3.13/site-packages/*.pth; mkdir -p data/forward/cb &amp;&amp; date &gt;&gt; data/forward/cb/run.log &amp;&amp; .venv/bin/python research/forward/cb_forward.py daily &gt;&gt; data/forward/cb/run.log 2&gt;&amp;1</string>
+    <string>cd /Users/kebin/Documents/GitHub/investment &amp;&amp; chflags nohidden .venv/lib/python3.13/site-packages/_editable_impl_research.pth; mkdir -p data/forward/cb &amp;&amp; date &gt;&gt; data/forward/cb/run.log &amp;&amp; .venv/bin/python research/forward/cb_forward.py daily &gt;&gt; data/forward/cb/run.log 2&gt;&amp;1</string>
   </array>
   <key>StartCalendarInterval</key>
   <array>
