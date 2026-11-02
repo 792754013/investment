@@ -28,3 +28,5 @@ review_log:
     note: 资金费 carry G1 不通过，按 plan.md 10.5 节提前启动二期，建卡；免费数据可行性见 docs/research/CB-P0-plan.md
   - date: 2026-11-02
     note: C1 双低轮动（v1～v4，135 次试验）G1 不通过、未解封；状态待用户决定，见 docs/research/CB-G1-conclusion.md
+  - date: 2026-11-02
+    note: v5b（双低 + 强赎即卖 + 下修提议买入）样本内 2 组按字面满足 G1，但敏感性翻转、2026 年初跑输，独立复核不建议解封；待用户决定，见 docs/research/C1v5-events-overlay.md
