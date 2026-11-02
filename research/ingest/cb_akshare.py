@@ -2,11 +2,11 @@
 
 来源全部通过 akshare（东方财富、新浪、巨潮、中证）：
   cb_list      全部转债清单（含已退市），东方财富 bond_zh_cov。注意：正股价、评级等是当前快照，有前视，回测不得用来筛选
-  cb_daily     转债日线，新浪 bond_zh_hs_cov_daily
+  cb_daily     转债日线，新浪 bond_zh_hs_cov_daily，volume 单位是张（成交额 ≈ volume × 价格，已用实时行情核对）
   cb_value     纯债价值、转股价值、溢价率日序列，东方财富 bond_zh_cov_value_analysis
   cb_issue     发行条款（初始转股价、到期日等），巨潮 bond_cov_issue_cninfo
   stock_daily  正股日线（不复权，算转股价值用），东方财富 stock_zh_a_hist
-  cb_index     中证转债指数 000832 日线，中证指数官网（新浪源只到 2018 年，不用）
+  cb_index     中证转债指数 000832、中证货币基金指数 H11025 日线，中证指数官网（新浪源只到 2018 年，不用）
 
 时间约定：交易日收盘 15:00 北京时间 = 07:00 UTC，ts 一律取这个时刻。
 
@@ -28,6 +28,7 @@ from lab.paths import raw_dir
 
 SLEEP = 0.4
 FIRST_ISSUE_YEAR = 2007
+INDEXES = ["000832", "H11025"]  # 中证转债、中证货币基金
 
 
 def cb_raw():
@@ -64,8 +65,9 @@ def cmd_download() -> None:
     root = cb_raw()
     fetch(root / "cb_list.parquet", ak.bond_zh_cov)
     lst = pd.read_parquet(root / "cb_list.parquet")
-    fetch(root / "cb_index_000832.parquet", lambda: ak.stock_zh_index_hist_csindex(
-        symbol="000832", start_date="20020101", end_date=date.today().strftime("%Y%m%d")))
+    for code in INDEXES:
+        fetch(root / f"cb_index_{code}.parquet", lambda code=code: ak.stock_zh_index_hist_csindex(
+            symbol=code, start_date="20020101", end_date=date.today().strftime("%Y%m%d")))
     for y in range(FIRST_ISSUE_YEAR, date.today().year + 1):
         fetch(root / "issue" / f"{y}.parquet",
               lambda y=y: ak.bond_cov_issue_cninfo(start_date=f"{y}0101", end_date=f"{y}1231"))
@@ -142,12 +144,13 @@ def cmd_ingest() -> None:
     lake.write("cb_issue", issue, ts_col="ts", part="all")
     print("cb_issue", issue.height, "行")
 
-    idx = pl.from_pandas(pd.read_parquet(root / "cb_index_000832.parquet")).rename(
-        {"日期": "date", "开盘": "open", "最高": "high", "最低": "low", "收盘": "close"}
-    ).select("date", "open", "high", "low", "close")
-    idx = idx.with_columns(to_ts("date").alias("ts")).drop("date")
-    lake.write("cb_index", idx, ts_col="ts", part="000832")
-    print("cb_index", idx.height, "行")
+    for code in INDEXES:
+        idx = pl.from_pandas(pd.read_parquet(root / f"cb_index_{code}.parquet")).rename(
+            {"日期": "date", "开盘": "open", "最高": "high", "最低": "low", "收盘": "close"}
+        ).select("date", "open", "high", "low", "close")
+        idx = idx.with_columns(to_ts("date").alias("ts"), pl.lit(code).alias("index_code")).drop("date")
+        lake.write("cb_index", idx, ts_col="ts", part=code)
+        print("cb_index", code, idx.height, "行")
 
 
 if __name__ == "__main__":
