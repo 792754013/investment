@@ -3,7 +3,10 @@
 规则：
   双低值 = 收盘价 + 转股溢价率（百分数）。每 FREQ 个交易日在 T 日收盘后排序，
   已持有且排名在前 K = N × BUFFER 名内的继续持有，其余卖出，空位按排名从前往后补满 N 只。
-  新买入按 T 日权益 / N 定额，按 10 张取整；已持有的不再平衡，以减少换手。
+  已持有的不再平衡，以减少换手。新买入按 10 张取整。
+  v4 起改为满仓：买单按"成交时可用现金 / 未成交买单数"定额；强赎、到期、违约退出或买单作废后，
+  当天收盘就按排名补单，不等下一次调仓。v3 及以前按"T 日权益 / N"定额、不补仓，长期闲置 15%～20% 现金
+  （见 docs/research/C1b-diagnose-2025.md）。
 可投池：T 日有收盘价和溢价率，上市满 5 个交易日，过去 20 日平均成交额 ≥ 100 万元；
   v3 起加两条信用过滤（只用 T 日数据）：转债收盘价 ≥ PX_FLOOR，正股收盘价 ≥ 1.5 元（防面值退市）。
   v2 没有这两条，结果在退市整理期买进了蓝盾、岭南等即将退市的券。
@@ -101,11 +104,12 @@ def run(days, by_day, ranks, info, freq, n, buffer, min_fee=0.0, recovery=0.0, p
     b = Book(min_fee, recovery)
     last_px: dict[str, float] = {}
     pend_sell: set[str] = set()
-    pend_buy: dict[str, tuple[float, int]] = {}
+    pend_buy: dict[str, int] = {}  # 代码 → 已顺延天数
     curve = []
     k = math.ceil(n * buffer)
     for di, day in enumerate(days):
         today = by_day[day]
+        refill = False
         for code, (px, _) in today.items():
             if code in b.pos:
                 last_px[code] = px
@@ -120,24 +124,27 @@ def run(days, by_day, ranks, info, freq, n, buffer, min_fee=0.0, recovery=0.0, p
                 b.defaults += 1
                 b.events.append((day, code, "sell", "default", z * lp * b.recovery))
             pend_sell.discard(code)
+            refill = True
         # 执行挂单（T+1 收盘）
         for code in [c for c in pend_sell if c in today]:
             b.sell(code, *today[code], day, "rotate")
             pend_sell.discard(code)
         for code in list(pend_buy):
-            budget, waited = pend_buy[code]
             if code in today and code not in pend_sell:
-                b.buy(code, *today[code], budget, day)
+                b.buy(code, *today[code], b.cash / len(pend_buy), day)
                 last_px[code] = today[code][0]
                 del pend_buy[code]
-            elif waited >= 5:
+            elif pend_buy[code] >= 5:
                 del pend_buy[code]
+                refill = True
             else:
-                pend_buy[code] = (budget, waited + 1)
+                pend_buy[code] += 1
         equity = b.cash + sum(z * last_px.get(c, info[c][1]) for c, z in b.pos.items())
         curve.append((day, equity, len(b.pos), b.cash))
         # T 日收盘后出信号
-        if di % freq == 0 and di + 1 < len(days):
+        if di + 1 >= len(days):
+            pass
+        elif di % freq == 0:
             order = ranks[px_floor][day]
             rank = {c: i for i, c in enumerate(order)}
             keep = {c for c in b.pos if rank.get(c, 10**9) < k}
@@ -150,7 +157,15 @@ def run(days, by_day, ranks, info, freq, n, buffer, min_fee=0.0, recovery=0.0, p
                 if slots <= 0:
                     break
                 if c not in b.pos:
-                    pend_buy[c] = (equity / n, 0)
+                    pend_buy[c] = 0
+                    slots -= 1
+        elif refill:
+            slots = n - (len(b.pos) - len(pend_sell)) - len(pend_buy)
+            for c in ranks[px_floor][day]:
+                if slots <= 0:
+                    break
+                if c not in b.pos and c not in pend_buy:
+                    pend_buy[c] = 0
                     slots -= 1
     eq = pl.DataFrame(curve, schema=["ts", "equity", "n_hold", "cash"], orient="row")
     ev = pl.DataFrame(b.events, schema=["ts", "bond_code", "side", "why", "amount"], orient="row")
@@ -210,10 +225,8 @@ def main() -> None:
     print(f"交易日 {len(days)}，{days[0]:%Y-%m-%d} ～ {days[-1]:%Y-%m-%d}")
 
     OUT.mkdir(parents=True, exist_ok=True)
+    # v4 只在原 27 组网格上重跑一次（用户 2026-11-02 确认）；v3 的敏感性组合见 git 历史 112a9b0
     runs = [dict(freq=f, n=n, buffer=bf, min_fee=0.0, recovery=0.0) for f, n, bf in itertools.product(*GRID.values())]
-    runs += [dict(freq=f, n=n, buffer=bf, min_fee=5.0, recovery=0.0) for f, n, bf in SENS]
-    runs += [dict(freq=f, n=n, buffer=bf, min_fee=0.0, recovery=0.5) for f, n, bf in SENS]
-    runs += [dict(freq=f, n=n, buffer=bf, px_floor=fl) for f, n, bf in SENS for fl in (70, 90)]
     res = []
     for r in runs:
         eq, ev, b = run(days, by_day, ranks, info, **r)
@@ -227,7 +240,7 @@ def main() -> None:
                                                          stock_floor=STOCK_FLOOR),
                       metrics={k: m[k] for k in ("net_apr", "excess_b1", "excess_b2", "mdd", "turnover", "defaults")}
                       | {"years": m["years"]}, sample="in_sample",
-                      note="v3：加入转债价格下限与正股 1.5 元下限的信用过滤")
+                      note="v4：满仓（按可用现金定额、退出当天补单），其余同 v3")
         res.append(r | {k: v for k, v in m.items() if k != "years"} | {f"y{k}": v for k, v in m["years"].items()})
         print(tag, {k: (round(v, 4) if isinstance(v, float) else v) for k, v in m.items() if k != "years"}, flush=True)
     t = pl.DataFrame(res)
