@@ -45,7 +45,7 @@ uv run pytest -q            # 跑测试
 uv run jupyter lab          # notebook
 ```
 
-如果出现 `ModuleNotFoundError: No module named 'lab'`：macOS 给 `.venv` 里的 `.pth` 文件加了 hidden 标记，Python 3.13 会跳过它。运行 `chflags nohidden .venv/lib/python3.13/site-packages/*.pth` 即可。
+如果出现 `ModuleNotFoundError: No module named 'lab'`：macOS 给 `.venv` 里的 `.pth` 文件加了 hidden 标记，Python 3.13 会跳过它。运行 `chflags nohidden .venv/lib/python3.13/site-packages/*.pth` 即可。这个标记会被系统反复加回来（疑似 iCloud 同步 Documents），所以每次运行脚本前都先执行一次。
 
 ## 安全
 

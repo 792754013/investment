@@ -1,0 +1,4 @@
+ts_utc,experiment,variant,sample,params,metrics,git_commit,note
+2026-11-02T05:38:39+00:00,r01_exec_map,,in_sample,"{""capital_mult"": {""A"": 2.0, ""B"": 1.3}, ""cost"": 0.007, ""min_listed_days"": 30, ""min_spot_turnover"": 5000000.0, ""oi_proxy_turnover"": 25000000.0}","{""入场费率 ≥ 池内 90 分位（33%）"": 0.0505, ""全部结算"": -0.1796}",f8c8e55-dirty,描述性统计，非规则回测
+2026-11-02T05:39:23+00:00,r01_exec_map,,in_sample,"{""capital_mult"": {""A"": 2.0, ""B"": 1.3}, ""cost"": 0.007, ""min_listed_days"": 30, ""min_spot_turnover"": 5000000.0, ""oi_proxy_turnover"": 25000000.0}","{""入场费率 ≥ 池内 90 分位（33%）"": 0.0505, ""全部结算"": -0.1796}",f8c8e55-dirty,描述性统计，非规则回测
+2026-11-02T05:39:42+00:00,r01_exec_map,,in_sample,"{""capital_mult"": {""A"": 2.0, ""B"": 1.3}, ""cost"": 0.007, ""min_listed_days"": 30, ""min_spot_turnover"": 5000000.0, ""oi_proxy_turnover"": 25000000.0}","{""入场费率 ≥ 池内 90 分位（33%）"": 0.0505, ""全部结算"": -0.1796}",f8c8e55-dirty,描述性统计，非规则回测
