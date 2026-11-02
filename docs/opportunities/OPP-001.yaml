@@ -1,0 +1,38 @@
+id: OPP-001
+name: 永续资金费率 carry（同所现货多 + 永续空，OKX，变体 A / B）
+status: retired              # candidate / researching / paper / live / decaying / retired
+mechanism: 偏好溢价
+counterparty: 加杠杆做多永续合约的交易者，愿意为杠杆多头支付资金费
+why_institutions_absent: >
+  主流币已被大型基差产品和机构占据；中小币种单品种容量小、
+  运维繁琐、尾部风险高，大资金不划算
+capacity_estimate: 未评估（G1 第 1 条已不通过）
+worst_case:
+  - 交易所倒闭导致该所资金归零
+  - 分账户模式下空头腿被强平后剩下裸多现货
+  - 稳定币脱锚
+decay_signals:
+  - 品种池内费率中位数持续下降          # 已出现：2025 年起约 1/3 结算停在基准费率
+  - 高费率持续时间（半衰期）缩短        # 已出现：2025 年持仓中位约 1.5 天
+  - 出现新的同类大规模产品              # 已出现：Ethena 等
+my_cost_advantage: 自动化执行与风控平台；资金小，可进出中小币种（研究表明不足以抵消 VIP0 taker 成本）
+data_sources: [OKX market-data-history 月度归档, OKX REST 公开接口]
+entry_gate: G1
+kill_criteria:
+  - 连续 8 周实际净年化低于门槛
+  - 出现无法对冲的新尾部风险
+result:
+  gate: G1
+  verdict: fail
+  in_sample_best_net_apr: 0.004        # bt01，变体 B、入场 ≥ 50%、10 仓，悲观口径
+  in_sample_hurdle: 0.0948             # USDT 活期 4.48% + 5pp
+  favorable_case_total_apr: 0.042      # bt01b，含闲置资金活期利息，低于活期 4.48%
+  oracle_bound_excess: 0.011           # 完美预知 + 悲观成本，超出基准
+  trials: 50
+  sealed_data_used: false
+  report: docs/research/G1-conclusion.md
+review_log:
+  - date: 2026-10-29
+    note: 建卡
+  - date: 2026-11-02
+    note: P1 研究完成，样本内即不达 G1 门槛，未解封；用户确认停止，状态改为 retired
