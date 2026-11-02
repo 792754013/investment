@@ -8,6 +8,12 @@ P0（经济性与准备）+ P1（快速研究）→ 闸门 G0、G1。目标只�
 
 **2026-11-02 更新：G1 不通过，资金费 carry 已停止**（`docs/research/G1-conclusion.md`，OPP-001 已 retired）。封存段没有解封。不再为 carry 追加试验，也不写执行代码。用户已决定**提前启动二期 A 股可转债**（OPP-002），计划和免费数据可行性见 `docs/research/CB-P0-plan.md`。研究纪律、封存起点和"G1 前不写执行代码、不买付费数据"同样适用。
 
+**2026-11-02 更新：可转债进入"冻结 + 前向记录"**（`docs/research/CB-forward.md`）。
+- 规则和参数冻结在 `configs/strategies/cb_rotation.yaml`，代码按哈希锁定。**前向期间（到 2027-11-01）不得修改 `cb01_double_low.py`、`cb_notices.py` 和这份 yaml**，改了前向记录就作废。
+- `data/forward/` 与 `data/sealed/` 同等对待：只由 `research/forward/cb_forward.py` 采集和重放，评估日之前不做业绩分析，不在对话里报告前向收益。
+- 封存段（2026-05 ～ 2026-10）继续封存，评估日后经用户同意与前向数据合并检验。
+- 定时任务：`ops/launchd/com.investment.cb-forward.plist`，周一至周五 17:30 运行。缺口看 `data/forward/cb/gaps.csv`，不插值。
+
 - **一期交易所：OKX**（理由见 `docs/research/P0-exchange-comparison.md`）。资金费历史用 `public/market-data-history` 的月度归档，最早到 2022-01；API 只给最近约 3 个月。
 - **一切在本地 Mac 上跑**。本地验证通过之前不买 VPS，也不要建议购买。采集脚本用 launchd 在本机运行，Mac 休眠或断网造成的缺口要如实记录，不要插值掩盖。
 - G1 之前**不写任何执行或下单代码**，不购买付费数据（plan.md 8.5.4）。

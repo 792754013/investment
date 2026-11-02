@@ -1874,6 +1874,7 @@ dependencies = [
     { name = "pandas" },
     { name = "polars" },
     { name = "pyarrow" },
+    { name = "pyyaml" },
 ]
 
 [package.metadata]
@@ -1884,6 +1885,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2" },
     { name = "polars", specifier = ">=1.0" },
     { name = "pyarrow", specifier = ">=15" },
+    { name = "pyyaml", specifier = ">=6" },
 ]
 
 [[package]]

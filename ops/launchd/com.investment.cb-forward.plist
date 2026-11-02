@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- 可转债前向记录：周一至周五 17:30（本机时区为北京时间）运行一次。
+     Mac 休眠错过时，launchd 会在唤醒后补跑；脚本发现早于 15:30 或不是交易日会直接退出，缺口记入 gaps.csv。
+     安装：cp ops/launchd/com.investment.cb-forward.plist ~/Library/LaunchAgents/ && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.investment.cb-forward.plist
+     卸载：launchctl bootout gui/$(id -u)/com.investment.cb-forward && rm ~/Library/LaunchAgents/com.investment.cb-forward.plist -->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.investment.cb-forward</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>-c</string>
+    <string>cd /Users/kebin/Documents/GitHub/investment &amp;&amp; chflags nohidden .venv/lib/python3.13/site-packages/*.pth; mkdir -p data/forward/cb &amp;&amp; date &gt;&gt; data/forward/cb/run.log &amp;&amp; .venv/bin/python research/forward/cb_forward.py daily &gt;&gt; data/forward/cb/run.log 2&gt;&amp;1</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>17</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>17</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>17</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>17</integer><key>Minute</key><integer>30</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>17</integer><key>Minute</key><integer>30</integer></dict>
+  </array>
+  <key>StandardErrorPath</key>
+  <string>/Users/kebin/Documents/GitHub/investment/data/forward/cb/launchd.err</string>
+</dict>
+</plist>

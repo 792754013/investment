@@ -1,0 +1,50 @@
+# 可转债双低 + 事件规则：冻结参数（2026-11-02，用户确认"冻结 + 前向记录"）
+#
+# 本文件提交后不得修改。规则代码按 code_sha256 锁定：前向记录脚本启动时会校验哈希，不一致就拒绝运行。
+# 冻结的是 v5b 样本内结果（docs/research/C1v5-events-overlay.md），包括复核发现但未修复的 ev_pos 遗留 bug，
+# 目的是让前向结果与样本内回测使用完全相同的规则。
+#
+# 检验安排（CB-G1-criteria.md 第 4、5 节）：
+#   - 封存段 2026-05-01 ～ 2026-10-31 保持封存，不解封；
+#   - 从 forward.start 起，用 research/forward/cb_forward.py 每个交易日收盘后按本规则记录假设成交；
+#   - 到 forward.evaluate_after 之后，经用户同意，把"封存段 + 前向记录"合并，按 G1 第 2、3 条一次性判定；
+#   - 前向期间不得根据前向结果修改规则或参数；改了就作废，重新冻结、重新计时。
+
+strategy: cb_double_low_events
+version: v5b
+capital: 75000            # 元，区间 5万～10万的中点
+
+rules:
+  freq: 5                 # 每 5 个交易日调仓一次（以前向记录的第一个交易日为第 0 天）
+  n: 30                   # 持仓只数
+  buffer: 1.0             # 排名在前 n × buffer 内的持仓继续持有
+  px_floor: 80            # 转债收盘价下限（元）
+  stock_floor: 1.5        # 正股收盘价下限（元）
+  min_amt20: 1000000      # 过去 20 日平均成交额下限（元）
+  min_age: 5              # 上市满 5 个交易日
+  call_exit: true         # 强赎（含首个提示性公告）事件日收盘卖出，之后不再买入
+  down_buy: true          # 董事会提议下修事件日收盘买入
+  ev_hold: 20             # 事件持仓持有交易日数，最多 n // 3 只
+
+costs:                    # 与样本内主口径相同
+  commission: 0.0002      # 万 2，无最低收费（实盘前提：开户时谈到无最低收费）
+  exchange_fee: 0.00001
+  slip: 0.001             # 每边冲击成本
+  slip_illiquid: 0.003    # 价格 < 90 或 20 日均成交额 < 500 万
+  default_recovery: 0.0   # 违约按全损
+
+code_sha256:
+  research/analysis/cb01_double_low.py: 75fc1177cd9f9bcef792761afaf4cdc59c090a0a89eac56c7e9b9e0c8400b36e
+  research/ingest/cb_notices.py: 42a6fe2a714d1d73fc0a56109c4d995b04f88a59ba9a7dd05a9ea51c50b66872
+
+in_sample:
+  window: 2018-01-02 ～ 2026-04-30
+  excess_b1: 0.088
+  mdd: 0.175
+  worst_full_year: -0.017
+  trials_cb: 249          # 冻结时 research/trials.csv 中可转债相关试验累计次数
+
+forward:
+  start: 2026-11-02       # 第一个前向交易日
+  evaluate_after: 2027-11-01
+  data_dir: data/forward/cb   # 与封存段同等对待：评估之前不做业绩分析
