@@ -794,6 +794,8 @@ investment/
 
 预估工作量：可转债研究平台约 4 人周，发现层扩展 A 股信息源约 1 人周。
 
+> 2026-11-02：资金费 carry G1 不通过（`docs/research/G1-conclusion.md`），二期按第二个条件提前启动。P0 / P1 计划见 `docs/research/CB-P0-plan.md`。
+
 ---
 
 ## 11. 模块二：发现层（LLM）

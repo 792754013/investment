@@ -1,0 +1,28 @@
+id: OPP-002
+name: A 股可转债（双低基准 + 下修 / 强赎 / 回售事件）
+status: researching          # candidate / researching / paper / live / decaying / retired
+mechanism: 规则约束 + 摩擦成本
+counterparty: >
+  不想还钱的发行人（回售或到期压力下主动下修转股价）；
+  受评级和风控约束、被迫回避或卖出低评级券的机构；
+  为高价转债支付过高溢价的散户
+why_institutions_absent: >
+  单只规模小、条款复杂需要逐只研究；评级门槛使机构不能持有低评级、低价券
+capacity_estimate: 待 C6 研究给出
+worst_case:
+  - 正股退市导致转债不能足额兑付（2023～2024 年已发生多起），单只亏损 70% 以上
+  - 信用冲击期全市场低价券同时下跌（2023-11 ～ 2024-06）
+  - 下修、强赎、退市规则突变
+decay_signals:
+  - 双低组合相对中证转债指数的超额收益持续收窄
+  - 新发行数量下降，可选品种减少
+  - 下修提议通过率或下修幅度下降
+my_cost_advantage: 资金小，可以进出小盘券；自动化逐只解析条款并跟踪公告；手续费低（无印花税）
+data_sources: [akshare（东方财富、新浪、巨潮、集思录）, 巨潮资讯公告]
+entry_gate: G1（可转债版，门槛待 C1 口径确定后提交）
+kill_criteria:
+  - C1 双低基准扣除悲观成本后跑不赢中证转债指数
+  - 信用筛选挡不住退市尾部，单次事件亏损超过一年超额
+review_log:
+  - date: 2026-11-02
+    note: 资金费 carry G1 不通过，按 plan.md 10.5 节提前启动二期，建卡；免费数据可行性见 docs/research/CB-P0-plan.md
