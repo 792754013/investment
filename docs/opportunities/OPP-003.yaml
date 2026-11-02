@@ -1,0 +1,25 @@
+id: OPP-003
+name: 场内 QDII / LOF 溢价申购套利
+status: candidate            # candidate / researching / paper / live / decaying / retired
+mechanism: 规则约束（外汇额度、申购限额）
+counterparty: 想买境外资产、只能通过场内买入的投资者，为场内份额支付溢价
+why_institutions_absent: 每日申购限额小（常见每账户几百到几千元），规模做不大
+barrier: 需要场外申购后转托管或场内申购，再在场内卖出；限额按账户计，必须手工操作
+crowding: 中。溢价数据公开（集思录等），但限额限制了套利的总量，溢价能长期存在
+capacity_estimate: 待快速否证（受每日限额约束，与总资金大小基本无关）
+worst_case:
+  - 申购到卖出的 T+2 左右期间，溢价收窄，同时净值下跌
+  - 外汇额度放宽或基金恢复大额申购，溢价消失
+decay_signals:
+  - 平均溢价持续下降
+  - 限购放宽
+my_cost_advantage: 限额正好适合个人；愿意每天手工几分钟
+g0_annual_rmb: 待快速否证     # 按实际可用额度估算的每年净额（元），低于 3,000 元放弃
+data_sources: [集思录, akshare, 基金公司限购公告]
+entry_gate: 快速否证 → G0 → G1
+kill_criteria:
+  - 快速否证的年净额低于 3,000 元
+  - 悲观口径下单次期望收益为负
+review_log:
+  - date: 2026-11-02
+    note: 按 plan v2 建卡，为下一个快速否证对象
