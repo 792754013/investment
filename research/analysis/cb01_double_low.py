@@ -135,7 +135,7 @@ def run(days, by_day, ranks, info, freq, n, buffer, min_fee=0.0, recovery=0.0, p
             else:
                 pend_buy[code] = (budget, waited + 1)
         equity = b.cash + sum(z * last_px.get(c, info[c][1]) for c, z in b.pos.items())
-        curve.append((day, equity, len(b.pos)))
+        curve.append((day, equity, len(b.pos), b.cash))
         # T 日收盘后出信号
         if di % freq == 0 and di + 1 < len(days):
             order = ranks[px_floor][day]
@@ -152,7 +152,7 @@ def run(days, by_day, ranks, info, freq, n, buffer, min_fee=0.0, recovery=0.0, p
                 if c not in b.pos:
                     pend_buy[c] = (equity / n, 0)
                     slots -= 1
-    eq = pl.DataFrame(curve, schema=["ts", "equity", "n_hold"], orient="row")
+    eq = pl.DataFrame(curve, schema=["ts", "equity", "n_hold", "cash"], orient="row")
     ev = pl.DataFrame(b.events, schema=["ts", "bond_code", "side", "why", "amount"], orient="row")
     return eq, ev, b
 
