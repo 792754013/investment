@@ -1,6 +1,6 @@
 id: OPP-004
 name: 封闭式 / 定期开放基金折价收敛
-status: researching          # candidate / researching / paper / live / decaying / retired
+status: retired              # candidate / researching / paper / live / decaying / retired
 mechanism: 规则约束（封闭期内不能赎回）
 counterparty: 想提前离场的封闭期持有人，在场内折价卖出；以及需要对冲才能参与、因而要求更高折价的机构
 why_institutions_absent: 无风险做法必须用 IC / IM 期货对冲，2022～2024 年贴水带来的对冲成本和折价相当；场内流通份额小
@@ -31,3 +31,5 @@ review_log:
     note: G1 不通过（样本内条件 2：84 个配置的超额回撤 5,069～14,447 元，上限 3,000 元；分红日修正后最好的配置为 −3,476 元），没有解封，经独立复核。等用户决定：停止，或者做一轮结构性修改（第 2 轮）。见 docs/research/OPP004-G1-conclusion.md
   - date: 2026-11-03
     note: 第 2 轮（板块限额 + 临近开放变体，预先登记）不通过：180 个配置中只有 5 个满足，都是尖峰、没有高原；经独立复核，没有解封。待用户决定停止或第 3 轮。见 docs/research/OPP004-round2-conclusion.md
+  - date: 2026-11-03
+    note: 用户决定停止。retired。封存段未解封，以后可作为其他机会的样本外
