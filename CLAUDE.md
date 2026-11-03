@@ -7,7 +7,7 @@
 - **v1.1 的两个方向都已结束**：加密资金费 carry（OPP-001）G1 不通过；可转债双低 + 事件（OPP-002）证据不足、前向记录已停止。两者都是 retired，封存段都没有解封。结论见 `docs/research/G1-conclusion.md`、`CB-G1-conclusion.md`、`C1v5-events-overlay.md`、`CB-forward.md`。
 - **OPP-003（QDII / LOF 溢价申购）已在快速否证阶段放弃**（`docs/research/OPP003-quick-falsify.md`）：溢价高的时候多半暂停申购，其余时候限额只有每天 10～100 元。
 - **OPP-004（封闭 / 定开基金折价收敛）已停止**（retired，`docs/research/OPP004-G1-conclusion.md`、`OPP004-round2-conclusion.md`）：两轮都没有通过 G1，超额回撤超限，找不到高原；没有解封。
-- **OPP-005（中小盘指数调样）正在研究**（researching，`docs/research/OPP005-quick-falsify.md`）：中证 1000 调入股公告 → 生效收盘的超额稳定。用户 2026-11-03 把单机会上限调到 30 万元（plan.md 3.3 节）后，只买沪深主板约 3,000～4,100 元/年，刚好过 G0。下一步写 G1 条件，由用户确认后提交。
+- **OPP-005（中小盘指数调样）已停止**（retired，`docs/research/OPP005-quick-falsify.md`、`OPP005-G1-conclusion.md`）：用户把单机会上限调到 30 万元后重启，G1 不通过；正收益年数不足，收益依赖每期 1～2 只暴涨股；没有解封。plan.md 第 5 节的候选已经全部检验完，下一步方向由用户决定。
 - **用户的决定**（plan.md 第 9 节）：以赚钱为主；A 股资金最多约 30 万元，前提是风险可控（plan.md 3.3 节限额）；研究每月约 10 小时，同时最多推进 1～2 个机会；1 个月内开户；加密方向保留观察，确认法律风险之前不研究、不执行。
 - **底仓政策由用户自定**，不替用户选配置比例。
 - **一切在本地 Mac 上跑**：不买 VPS，也不要建议购买；不搭 Go 平台；没有通过 plan.md 第 7 节的条件之前，不写自动下单代码；不买付费数据。定时任务用 launchd，Mac 休眠或断网造成的缺口如实记录，不插值。

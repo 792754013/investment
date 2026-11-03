@@ -1,6 +1,6 @@
 id: OPP-005
 name: 中小盘指数定期调样（公告后买入调入股，生效日收盘卖出）
-status: researching              # candidate / researching / paper / live / decaying / retired
+status: retired              # candidate / researching / paper / live / decaying / retired
 mechanism: 被迫交易（指数基金在生效日收盘按新样本调仓）
 counterparty: 跟踪中证 500 / 中证 1000 的被动基金，必须在生效日收盘买入调入股
 why_institutions_absent: 并不缺席。大资金会在公告前预测名单并提前布局（中证 500 调入股公告前 20 天已经跑赢 +1.3%），公告后剩下的空间小、一年只有 2 次
@@ -28,4 +28,6 @@ review_log:
   - date: 2026-11-03
     note: 用户把 plan.md 3.3 节单机会上限调到 30 万元（看到结果后修改，已如实记录）。x02 重算 36 次：只买主板约 3,000～4,100 元/年，刚好过 G0；2022、2025 年为负。重启为 researching，下一步写 G1 条件
   - date: 2026-11-03
-    note: G1 不通过（主板、冲击 0.3%）：条件 1 只有 3/5 年为正，条件 6 去掉每期贡献最大的 1 只后只剩约 700～830 元；没有解封；经独立复核。主板 + 创业板在主口径下同样不满足条件 6。见 docs/research/OPP005-G1-conclusion.md。是否停止待用户决定
+    note: G1 不通过（主板、冲击 0.3%）：条件 1 只有 3/5 年为正，条件 6 去掉每期贡献最大的 1 只后只剩约 700～830 元；没有解封；经独立复核。主板 + 创业板在主口径下同样不满足条件 6。见 docs/research/OPP005-G1-conclusion.md。
+  - date: 2026-11-03
+    note: 用户决定停止，retired
