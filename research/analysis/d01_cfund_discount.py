@@ -107,12 +107,13 @@ def trades(p: pl.DataFrame, exit_lag: int, mtm: bool = False) -> pl.DataFrame:
     return t.with_columns(pl.when(pl.col("is_mtm")).then(pl.col("gross")).otherwise(pl.col("gross_redeem")).alias("gross_redeem"))
 
 
-def simulate(t: pl.DataFrame, theta: float, min_days: int, max_days: int, min_fee: float, col: str) -> dict:
+def simulate(t: pl.DataFrame, theta: float, min_days: int, max_days: int, min_fee: float, col: str,
+             cap_total: float = CAP_TOTAL, exclude: tuple[str, ...] = ()) -> dict:
     """按日滚动：持仓到期释放资金；有空余资金时买年化折价最高的，规模受 3 万 / 10 万 / 成交额约束。"""
-    c = t.filter(pl.col("days").is_between(min_days, max_days) & pl.col("sig").is_not_null() & pl.col("amt20").is_not_null())
+    c = t.filter(~pl.col("code").is_in(list(exclude)) & pl.col("days").is_between(min_days, max_days) & pl.col("sig").is_not_null() & pl.col("amt20").is_not_null())
     c = c.with_columns(((-pl.col("sig") - 2 * SLIP - 2 * RATE) / (pl.col("days") / 365)).alias("ann")).filter(pl.col("ann") >= theta)
     by_day = c.sort("ts", "ann", "code", descending=[False, True, False]).partition_by("ts", as_dict=True, maintain_order=True)
-    held, book, cash = {}, [], float(CAP_TOTAL)
+    held, book, cash = {}, [], float(cap_total)
     for (ts,), g in sorted(by_day.items(), key=lambda kv: kv[0][0]):
         for k in [k for k, v in held.items() if v["x_ts"] <= ts]:
             v = held.pop(k)
@@ -143,7 +144,7 @@ def simulate(t: pl.DataFrame, theta: float, min_days: int, max_days: int, min_fe
             spread.append(dict(year=y, rmb=r["rmb"] * max((hi - lo).days, 0) / n))
     yearly = pl.DataFrame(spread).group_by("year").agg(pl.col("rmb").sum()).sort("year")
     top = b.group_by("code").agg(pl.col("rmb").sum()).sort("rmb", descending=True)
-    used = (b["size"] * (b["x_ts"] - b["ts"]).dt.total_days()).sum() / 365 / years / CAP_TOTAL
+    used = (b["size"] * (b["x_ts"] - b["ts"]).dt.total_days()).sum() / 365 / years / cap_total
     return dict(trades=b.height, funds=b["code"].n_unique(), net_mean=b["net"].mean(), net_med=b["net"].median(),
                 win=(b["net"] > 0).mean(), rmb_total=b["rmb"].sum(), years=years, rmb_per_year=b["rmb"].sum() / years,
                 util=used, top5_share=top["rmb"].head(5).sum() / top["rmb"].sum() if top["rmb"].sum() else None,
