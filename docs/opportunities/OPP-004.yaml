@@ -25,3 +25,5 @@ kill_criteria:
 review_log:
   - date: 2026-11-03
     note: 建卡并快速否证（188 次试验）。G0 勉强通过：平均每年超额 3,300～5,600 元，但 2023、2024 年低于 3,000；绝对盯市最大回撤 −38%。下一步等用户决定是否接受权益风险，见 docs/research/OPP004-quick-falsify.md
+  - date: 2026-11-03
+    note: 用户确认本来就要持有这部分权益；G1 条件提交（docs/research/OPP004-G1-criteria.md），下一步规则回测
