@@ -1,0 +1,18 @@
+# OPP-005 冻结规则（G1 条件：docs/research/OPP005-G1-criteria.md）。没有可调参数。
+opportunity: OPP-005
+index: 中证1000          # 只做中证 1000 定期调整（6 月、12 月）的调入股
+side: in
+entry: 公告后第 1 个交易日收盘买入
+exit: 生效日（最后一个旧样本交易日）收盘卖出，收盘集合竞价挂单
+weighting: 全买，等权
+pools:
+  A: [ "60", "00" ]            # 沪深主板，普通账户
+  B: [ "60", "00", "30" ]      # 沪深主板 + 创业板，需创业板权限
+capital: 300000
+max_weight_per_stock: 0.10
+costs:
+  commission: 0.00025
+  min_fee: 5.0
+  stamp_sell: { before_2023_08_28: 0.001, after: 0.0005 }
+  impact_per_side: 0.003      # 主口径；0.002 为敏感性
+benchmark: 中证1000 指数
