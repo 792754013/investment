@@ -1,0 +1,27 @@
+# OPP-007 主策略 B0（冻结，2026-11-05 用户确认 G1 条件）。解封前不得修改；解封时记录本文件所在提交的哈希。
+# 规则来源：research/analysis/r08_trend_daily.py（第 1 轮）、r09_trend_families.py 的 ens8/size/execute（第 2 轮现货口径）。
+
+[universe]
+assets = ["BTCUSDT", "ETHUSDT"]   # Binance 现货
+share = 0.5                       # 每个币分一半资金
+
+[signal]                          # 8 个信号等权，只做多：强度 = 为正的信号个数 / 8
+ma_windows = [20, 50, 100, 200]   # 收盘价 > N 日简单均线
+mom_windows = [20, 60, 120, 250]  # N 日收益 > 0
+
+[sizing]
+target_vol = 0.40                 # 年化
+vol_window = 60                   # 日对数收益标准差 × sqrt(365)
+cap = 1.0                         # 单币权重 = share × clip(强度 × 0.40 / 波动, 0, 1)
+
+[execution]
+signal_time = "第 t 天 00:00 UTC 日线收盘"
+trade_time = "第 t+1 天收盘"
+venue = "spot"                    # 现货，不付资金费，不加杠杆
+cost = 0.001                      # 成交额的 0.1%（吃单 + 滑点）
+band = 0.05                       # 单币权重变化 < 0.05 不调；目标为 0 时一律清仓
+idle_cash = "不计息（主口径）"
+
+[shadow]                          # 只记录，不参与 G1 判定
+E2 = "B0 × (恐惧贪婪指数 30 日均线 > 5 天前 ? 1 : 0.5)，指数晚 1 天使用"
+H4 = "B0 + 闲置资金按 4% 年息"

@@ -1,0 +1,34 @@
+id: OPP-007
+name: 加密货币日线趋势跟踪（BTC/ETH，波动率定仓）
+status: researching          # candidate / researching / paper / live / decaying / retired
+mechanism: 时间序列动量。投资者对信息反应不足、追涨杀跌，以及杠杆资金的顺周期加减仓，让日线到周线上的趋势有一定延续性
+counterparty: 逆势抄底、过早止盈的参与者；以及趋势反转时被迫平仓的一方（趋势跟踪自己在反转时也会亏）
+why_institutions_absent: 并不缺席。CTA 和趋势基金都在做，属于广为人知的风格溢价，不是独占机会
+barrier: 低。需要能承受大回撤、长时间跑输一直持有的纪律
+exclusive_barrier: 无。用户 2026-11-04 在 OPP-006 结论之后选择这个方向，第 7 问硬门槛按用户决定破例（与 OPP-006 相同），在此如实记录；2026-11-05 用户明确确认
+crowding: 中。风格溢价，拥挤时变弱
+capacity_estimate: 远大于 30 万元，BTC/ETH 日线容量不是问题
+worst_case:
+  - 长时间横盘，反复假突破，几个月连续小亏
+  - 急跌发生在日线信号来不及反应之前（一天跌 20% 以上）
+  - 加杠杆时被单日暴跌强平
+decay_signals:
+  - 检验段相对一直持有的优势消失
+  - 趋势平均持续时间变短
+my_cost_advantage: 无，只有低频带来的成本占比小
+g0_annual_rmb: 约 6.9 万元（30 万本金、永续口径、历史回测，不代表未来）
+data_sources: [Binance 现货日线（data.vision）, Binance U 本位永续资金费（data.vision）]
+entry_gate: 快速否证 → G0 → G1
+quick_falsify_plan: 见 docs/research/OPP007-trend-plan.md（看结果之前写定）
+kill_criteria: 见 docs/research/OPP007-trend-plan.md 第 4 节
+review_log:
+  - date: 2026-11-04
+    note: 建卡。用户在 OPP-006 结论后选择"日线趋势"；第 7 问专属门槛按用户决定破例；plan.md 1.4 节"不转向价格预测"对本卡按用户选择破例（规则化趋势跟踪，不训练预测模型）。方案和停止条件在看结果之前写定
+  - date: 2026-11-04
+    note: 快速否证通过（88 次试验，未解封）：主策略按永续口径年化 22.9%、最大回撤 34%、夏普 0.92（一直持有 25.0%、81%、0.68），6 条停止条件一条都没有触发。独立复核结果一致，没有发现前视偏差；资金费拖累此前被低估，用现货执行年化约 30%。下一步等用户确认 G1 条件和第 7 问破例，见 docs/research/OPP007-quick-falsify.md
+  - date: 2026-11-04
+    note: 用户要求起码试几十个大方向（指标、模型、新闻情绪、外部数据），并出独立报告。第 2 轮共 8 类 50 个方向，和第 1 轮主策略 B0 比较，Holm 校正后加折算夏普；方案在看结果之前写定，见 docs/research/OPP007-round2-plan.md
+  - date: 2026-11-05
+    note: 第 2 轮完成（118 行试验，未解封）：54 个方向（另有 2 个数据不可得）经 Holm 校正后没有一个显著优于 B0（现货执行，检验段 2023-01～2026-04 年化 28.2%、夏普 1.06）。检验段最好的是 E2 恐惧贪婪趋势过滤（夏普 1.26，p=0.08，校正后 1.0，折算置信度 75%～83%）。山寨币截面和面板机器学习在检验段大亏；单资产机器学习开发段就输给 B0。经独立复核，结论成立。建议保持 B0，闲置资金做现金管理，E2 只在前向记录里作影子版本；不再寻找新信号。仍然等用户确认 G1 条件和第 7 问破例，见 docs/research/OPP007-round2-report.md
+  - date: 2026-11-05
+    note: 用户按草稿确认 G1 条件和第 7 问破例。G1 条件见 docs/research/OPP007-G1-criteria.md（封存段最大回撤 ≤ 同期一直持有的 60%，不爆仓；收益只记录；前向纸面至少 6 个月），B0 参数冻结在 configs/strategies/opp007_b0.toml。解封要等用户同意，并且要在 G1 文件提交之后
