@@ -12,6 +12,7 @@
   uv run python research/ingest/okx_history.py manifest   # 确认合约族与月份 → data/raw/okx/manifest.parquet
   uv run python research/ingest/okx_history.py download   # 下载归档 zip → data/raw/okx/
   uv run python research/ingest/okx_history.py ingest     # 解压聚合 → lake: okx_funding / okx_swap_1h / okx_spot_1h
+  uv run python research/ingest/okx_history.py ingest1m   # 永续 1 分钟原样入库 → lake: okx_swap_1m（OPP-006 插针）
 """
 
 import asyncio
@@ -246,6 +247,31 @@ def cmd_ingest() -> None:
     print("入库结束", flush=True)
 
 
+def cmd_ingest_1m() -> None:
+    root = okx_raw()
+    ct_val = current_ct_val()
+    by_inst: dict[str, list] = {}
+    for p in sorted((root / "swap_1m").glob("*/*.zip")):
+        by_inst.setdefault(p.stem, []).append(p)
+    print(f"okx_swap_1m: {len(by_inst)} 个合约", flush=True)
+    for i, (inst_id, paths) in enumerate(by_inst.items(), 1):
+        raw = pl.concat([read_zip_csv(p) for p in paths], how="vertical_relaxed")
+        df = (
+            raw.select(
+                ms_to_utc("open_time").alias("ts"),
+                *(pl.col(c).cast(pl.Float64) for c in ("open", "high", "low", "close")),
+                quote_volume("swap", ct_val.get(inst_id)).alias("vol_quote"),
+            )
+            .unique("ts")
+            .sort("ts")
+            .with_columns(pl.lit(inst_id).alias("inst_id"))
+        )
+        lake.write("okx_swap_1m", df, ts_col="ts", part=inst_id)
+        if i % 25 == 0:
+            print(f"  {i}/{len(by_inst)}", flush=True)
+    print("入库结束", flush=True)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "manifest":
@@ -254,5 +280,7 @@ if __name__ == "__main__":
         asyncio.run(cmd_download_async())
     elif cmd == "ingest":
         cmd_ingest()
+    elif cmd == "ingest1m":
+        cmd_ingest_1m()
     else:
         sys.exit(__doc__)
