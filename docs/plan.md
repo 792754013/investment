@@ -410,3 +410,7 @@ review_log:
 | OPP-003 | `OPP003-quick-falsify.md` |
 | OPP-004 | `OPP004-quick-falsify.md`、`OPP004-G1-criteria.md`、`OPP004-G1-conclusion.md`、`OPP004-round2-plan.md`、`OPP004-round2-conclusion.md` |
 | OPP-005 | `OPP005-quick-falsify.md`、`OPP005-G1-criteria.md`、`OPP005-G1-conclusion.md` |
+| OPP-006 | `OPP006-quick-falsify.md`、`OPP006-ml-plan.md`、`OPP006-ml-conclusion.md`、`OPP006-round3-plan.md`、`OPP006-round3-conclusion.md` |
+| OPP-007 | `OPP007-trend-plan.md`、`OPP007-quick-falsify.md`、`OPP007-round2-plan.md`、`OPP007-round2-report.md`、`OPP007-G1-criteria.md` |
+| A 股指数日线趋势（未建卡） | `ATREND-plan.md`、`ATREND-quick-falsify.md` |
+| 执行研究 | `E03-cash-management.md`、`E04-tax-fees.md` |
