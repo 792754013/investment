@@ -414,3 +414,4 @@ review_log:
 | OPP-007 | `OPP007-trend-plan.md`、`OPP007-quick-falsify.md`、`OPP007-round2-plan.md`、`OPP007-round2-report.md`、`OPP007-G1-criteria.md` |
 | A 股指数日线趋势（未建卡） | `ATREND-plan.md`、`ATREND-quick-falsify.md` |
 | 执行研究 | `E03-cash-management.md`、`E04-tax-fees.md` |
+| 底仓配置的历史回看（4.1 节，供写投资政策说明参考） | `ALLOC-history.md`（交互页面见文中说明） |
